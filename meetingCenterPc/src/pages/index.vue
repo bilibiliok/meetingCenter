@@ -1,6 +1,6 @@
 <template>
 	<div class="hello">
-		ces
+		
 	</div>
 </template>
 <script>
@@ -12,8 +12,8 @@ export default {
 	}
 }
 </script>
-<style scope lang="scss">
+<style scoped lang="less">
 	.hello{
-		color:blue
+		font-size: 16px
 	}
 </style>
