@@ -3,13 +3,23 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import '../static/css/reset.css'
+import axios from 'axios'
+import qs from 'qs'
+import Vant from 'vant'
+import 'vant/lib/index.css'
 
 Vue.config.productionTip = false
+Vue.prototype.axios = axios
+Vue.prototype.qs = qs
+axios.defaults.baseURL = ''
+Vue.use(Vant)
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  axios,
   components: { App },
   template: '<App/>'
 })

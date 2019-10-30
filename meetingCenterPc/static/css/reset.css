@@ -1,0 +1,75 @@
+/* 初始化代码 */
+/* * {
+
+	-webkit-tap-highlight-color: transparent;
+	// box-sizing: content-box !important;
+	
+	} */
+	
+	body {
+	font-family: "Microsoft Yahei";
+	color: #000 !important;
+	}
+	
+	body,
+	div,
+	span,
+	p,
+	img,
+	input,
+	ul,
+	li,
+	a,
+	h1,
+	h2,
+	h3,
+	h4,
+	strong,
+	em,
+	ins,
+	del {
+	margin: 0;
+	padding: 0;
+	/* 清除内外边距 */
+	}
+	
+	i {
+	font-style: normal
+	}
+	
+	a {
+	
+	text-decoration: none;
+	
+	color: #000 !important;
+	}
+	
+	li {
+	list-style: none;
+	}
+	
+	input {
+	border: none;
+	outline: none;
+	}
+	
+	img {
+	border: none;
+	/* 清除低版本下的边框线 */
+	vertical-align: middle;
+	/* 行内块元素与文字中线对齐 */
+	}
+	
+	h1,
+	h2,
+	h3,
+	h4 {
+	font-weight: 400;
+	}
+	
+	body {
+	font: 12px/100% "微软雅黑";
+	background-color: #ffff;
+	color: #000;
+	line-height: 0rem !important;
+	}
