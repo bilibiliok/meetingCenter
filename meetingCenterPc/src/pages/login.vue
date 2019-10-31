@@ -1,10 +1,11 @@
 <template>
 	<div class="hello">
 		<div class="top-line">
-			<van-icon class="icon" @click="back" size="30" name="cross" />
+			<van-icon class="icon" @click="back" size="30" name="arrow-left" />
 		</div>
 		<div class="headimg">
-			<img src="../assets/cat.jpg" alt="" height="80" width="80">
+			<img v-if="!phone"  height="80" width="80" src="../assets/test.jpg" alt="">
+			<img v-else src="../assets/cat.jpg" alt="" height="80" width="80">
 		</div>
 		<div class="userMessage">
 			<div class="userNumber">
@@ -16,6 +17,7 @@
 		</div>
 		<div class="login">
 			<div :class="['queryMessage',{'search':show}]" @click="information">登录</div>
+			<div class="register">没有账号？<span @click="jump">立即注册</span></div>
 		</div>
 		<div class="otherway">
 			<span>——&nbsp;第三方登录&nbsp;——</span>
@@ -77,6 +79,10 @@ export default {
 		// 登录账号
 		information() {
 
+		},
+		// 注册账号
+		jump() {
+			this.$router.push('/register')
 		}
 	}
 }
@@ -87,15 +93,16 @@ export default {
 		font-size: 16px;
 		// background: #f5f5f5;
 		min-height: 100vh;
+		width: 100vw;
 		.headimg{
-			padding-top: .2rem;
+			padding-top: .1rem;
 			text-align: center;
 			img{
 				border-radius: 50%;
 			}
 		}
 		.userMessage{
-			padding-top: 1rem;
+			padding-top: .1rem;
 			.userNumber{
 				text-align: center;
 				input{
@@ -107,7 +114,7 @@ export default {
 				}
 			}
 			.userPassword{
-				padding-top: .5rem;
+				padding-top: .1rem;
 				text-align: center;
 				input{
 					width: 80%;
@@ -119,7 +126,7 @@ export default {
 			}
 		}
 		.login{
-			padding-top: 3rem;
+			padding-top: .5rem;
 			width: 80%;
 			margin: 0 auto;
 			.queryMessage {
@@ -139,9 +146,16 @@ export default {
 			.search {
 				opacity: 1;
 			}
+			.register{
+				text-align: center;
+				padding-top:5px;
+				&>span{
+					color:#22c8d8
+				}
+			}
 		}
 		.otherway{
-			margin-top: 180px;
+			margin-top: 100px;
 			// text-align: center;
 			&>span{
 				width: 100%;

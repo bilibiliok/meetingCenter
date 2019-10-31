@@ -5,10 +5,13 @@
 	// box-sizing: content-box !important;
 	
 	} */
+	html{
+		font-size: 26.66667vw;
+	}
 	
 	body {
 	font-family: "Microsoft Yahei";
-	color: #000 !important;
+	color: #000;
 	}
 	
 	body,
@@ -41,7 +44,7 @@
 	
 	text-decoration: none;
 	
-	color: #000 !important;
+	color: #000;
 	}
 	
 	li {
@@ -68,9 +71,8 @@
 	}
 	
 	body {
-	font: 12px/100% "微软雅黑";
+	/* font: 12px/100% "微软雅黑"; */
 	background-color: #ffff;
 	color: #000;
-	line-height: 0rem !important;
-	font-size: 26.66667vw;
+	/* line-height: 0rem !important; */
 	}
