@@ -1,6 +1,10 @@
 <template>
 	<div class="hello">
-		tes
+		<div class="list">
+			<div class="list-type">
+				<div class="name"></div>
+			</div>
+		</div>
 	</div>
 </template>
 <script>

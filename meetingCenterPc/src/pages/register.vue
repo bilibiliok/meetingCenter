@@ -50,6 +50,7 @@
 	</div>
 </template>
 <script>
+import { Toast } from 'vant';
 export default {
 	data() {
 		return {
@@ -63,29 +64,82 @@ export default {
 		}
 	},
 	mounted() {
-		console.log(this.axios)
+		// console.log(this.axios)
+		// console.log(this.isEmail('11111@qq.com'));
+		
 	},
 	methods:{
 		onClickLeft() {
 			this.$router.push('login')
 		},
+		// 验证电话
+		isPhoneAvailable(phonevalue) {
+			const phoneReg = /^1[3-578]\d{9}$/
+			if (phoneReg.test(phonevalue)) {
+				return true
+			}
+			return false
+		},
+		// 验证邮箱
+		isEmail(val) {
+			let pattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+			let domains= ["qq.com","163.com","vip.163.com","263.net","yeah.net","sohu.com","sina.cn","sina.com","eyou.com","gmail.com","hotmail.com","42du.cn"];
+			if(pattern.test(val)) {
+				let domain = val.substring(val.indexOf("@")+1);
+				for(let i = 0; i< domains.length; i++) {
+				if(domain == domains[i]) {
+					return true;
+				}
+				}
+			}
+			return false;
+		},
 		// 注册账号
 		jump() {
-			this.axios({
-				method:'POST',
-				url:'http://192.168.2.116:8080/test/meeting/conference/user',
-				data:{
-					loginId: this.loginId,
-					name: this.userName,
-					password: this.userPassword,
-					mobile: this.userPhone,
-					email: this.userEmail,
-					department: this.department,
-					jurisdiction: 2
-				}
-			}).then((res)=>{
-				console.log(res)
-			})
+			if(this.userName === ''){
+				Toast('请输入用户名')
+			} else if(this.userPassword === ''){
+				Toast('请输入密码')
+			} else if(this.userPhone === ''){
+				Toast('请输入电话')
+			} else if(this.userEmail === ''){
+				Toast('请输入邮箱')
+			} else if(this.department === ''){
+				Toast('请输入部门')
+			} else if(this.isPhoneAvailable(this.userPhone) === false){
+				Toast('请输入正确的号码格式')
+			} else if(this.isEmail(this.userEmail) === false){
+				Toast('请输入正确的邮箱格式')
+			} else {
+				Toast.loading({
+					message: '注册中...',
+					forbidClick: true,
+					loadingType: 'spinner'
+				})
+				this.axios({
+					method:'POST',
+					url:'http://192.168.2.116:8080/test/meeting/conference/user',
+					data:{
+						loginId: this.loginId,
+						name: this.userName,
+						password: this.userPassword,
+						mobile: this.userPhone,
+						email: this.userEmail,
+						department: this.department,
+						jurisdiction: 2
+					}
+				}).then((res)=>{
+					Toast.clear()
+					if(res.data.code === 200){
+						Toast.success('注册成功')
+						console.log(res)
+					}else{
+						console.log(111)
+						Toast.fail('该用户名已存在')
+					}
+				})
+			}
+			
 		},
 	}
 }
