@@ -7,15 +7,13 @@
 			<van-icon class="icon" @click="onClickLeft" color="white" size="30" name="arrow-left" />
 		</div>
 		<div class="message">
-			<input placeholder="请输入账号"  oninput="value=value.replace(/[^\d]/g,'')" v-model="loginId" type="text">
-			<input placeholder="请输入用户名" v-model="userName" type="text">
-			<input placeholder="请输入密码" v-model="userPassword" type="password">
-			<input placeholder="请确定密码" v-model="userPassword1" type="password">
-			<input placeholder="请输入电话" v-model="userPhone" type="text">
-			<input placeholder="请输入邮箱" v-model="userEmail" type="text">
-			<input placeholder="请输入部门" v-model="department" type="text">
+			<input readonly placeholder="请输入账号" v-model="user.loginId" type="text">
+			<input readonly placeholder="请输入用户名" v-model="user.name" type="text">
+			<input placeholder="请输入电话" v-model="user.mobile" type="text">
+			<input placeholder="请输入邮箱" v-model="user.email" type="text">
+			<input placeholder="请输入部门" v-model="user.department" type="text">
 		</div>
-		<div class="queryMessage" @click="jump">注册</div>	
+		<div class="queryMessage" @click="jump">修改</div>	
 	</div>
 </template>
 <script>
@@ -23,13 +21,14 @@ import { Toast } from 'vant';
 export default {
 	data() {
 		return {
-			loginId: '',
-			userName: '',
-			userPassword: '',
-			userPassword1: '',
-			userPhone: '',
-			userEmail: '',
-			department: ''
+			// loginId: '',
+			// userName: '',
+			// userPassword: '',
+			// userPassword1: '',
+			// userPhone: '',
+			// userEmail: '',
+            // department: '',
+            user:this.$store.state.user
 		}
 	},
 	mounted() {
@@ -37,9 +36,12 @@ export default {
 		// console.log(this.isEmail('11111@qq.com'));
 		Toast.setDefaultOptions({ duration: 2000 })
 	},
+	computed:{
+
+	},
 	methods:{
 		onClickLeft() {
-			this.$router.push('/login')
+			this.$router.push('/index/myMessage')
 		},
 		// 验证电话
 		isPhoneAvailable(phonevalue) {
@@ -56,9 +58,9 @@ export default {
 			if(pattern.test(val)) {
 				let domain = val.substring(val.indexOf("@")+1);
 				for(let i = 0; i< domains.length; i++) {
-				if(domain == domains[i]) {
-					return true;
-				}
+                    if(domain == domains[i]) {
+                        return true;
+                    }
 				}
 			}
 			return false;
@@ -66,54 +68,42 @@ export default {
 		// 注册账号
 		jump() {
 			// let password = this.password
-			let password = this.$md5(this.userPassword)
-			let password1 = this.$md5(this.userPassword1)
-			console.log('password',password)
-			if(this.loginId === ''){
+			// let password = this.$md5(this.userPassword)
+			// let password1 = this.$md5(this.userPassword1)
+			// console.log('password',password)
+			if(this.user.loginId === ''){
 				Toast('请输入账号')
-			}else if (this.userName === '') {
+			}else if (this.user.name === '') {
 				Toast('请输入用户名')
-			} else if(password === '') {
-				Toast('请输入密码')
-			} else if(this.userPhone === ''){
+			} else if(this.user.mobile === ''){
 				Toast('请输入电话')
-			} else if(this.userEmail === ''){
+			} else if(this.user.email === ''){
 				Toast('请输入邮箱')
-			} else if(this.department === ''){
+			} else if(this.user.department === ''){
 				Toast('请输入部门')
-			} else if(password1 !== password){
-				Toast('请确认输入密码一致')
-			} else if(this.isPhoneAvailable(this.userPhone) === false){
+			} else if(this.isPhoneAvailable(this.user.mobile) === false){
 				Toast('请输入正确的号码格式')
-			} else if(this.isEmail(this.userEmail) === false){
+			} else if(this.isEmail(this.user.email) === false){
 				Toast('请输入正确的邮箱格式')
 			} else {
 				Toast.loading({
-					message: '注册中...',
+					message: '修改中...',
 					forbidClick: true,
 					loadingType: 'spinner'
 				})
 				this.axios({
-					method:'POST',
+					method:'PUT',
 					url:'/test/meeting/conference/user',
-					data:{
-						loginId: this.loginId,
-						name: this.userName,
-						password: password,
-						mobile: this.userPhone,
-						email: this.userEmail,
-						department: this.department,
-						jurisdiction: 2
-					}
+					data:this.user
 				}).then((res)=>{
 					Toast.clear()
 					if(res.data.code === 200){
-						Toast.success('注册成功')
-						this.$router.push('/login')
+						Toast.success('修改成功')
 						console.log(res)
+						console.log('1111',this.user)
+						sessionStorage.setItem('user',this.user)
 					}else{
-						console.log(111)
-						Toast.fail('该用户名已存在')
+						Toast.fail('修改失败')
 					}
 				})
 			}

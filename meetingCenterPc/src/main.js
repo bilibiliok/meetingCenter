@@ -8,19 +8,24 @@ import axios from 'axios'
 import qs from 'qs'
 import Vant from 'vant'
 import 'vant/lib/index.css'
+import md5 from 'js-md5'
+import Vuex from 'vuex'
+import store from './store/store'
 
+Vue.prototype.$md5 = md5
 Vue.config.productionTip = false
 Vue.prototype.axios = axios
 Vue.prototype.qs = qs
 axios.defaults.baseURL = ''
 Vue.use(Vant)
-axios.defaults.baseURL = 'http://192.168.2.116:8080/'
+axios.defaults.baseURL = 'http://192.168.2.124:8080/'
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   axios,
+  store,
   components: { App },
   template: '<App/>'
 })

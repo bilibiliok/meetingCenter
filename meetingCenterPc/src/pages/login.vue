@@ -4,12 +4,12 @@
 			<van-icon class="icon" @click="back" size="30" name="arrow-left" />
 		</div>
 		<div class="headimg">
-			<img v-if="!phone"  height="80" width="80" src="../assets/test.jpg" alt="">
+			<img v-if="!loginId"  height="80" width="80" src="../assets/test.jpg" alt="">
 			<img v-else src="../assets/cat.jpg" alt="" height="80" width="80">
 		</div>
 		<div class="userMessage">
 			<div class="userNumber">
-				<input v-model="phone" ref="number" @blur="leaveNumber" @focus="watchNumber" type="text" placeholder="请输入手机号">
+				<input v-model="loginId" ref="number" @blur="leaveNumber" @focus="watchNumber" type="text" placeholder="请输入用户名">
 			</div>
 			<div class="userPassword">
 				<input v-model="password" ref="password" @blur="leavePassword" @focus="watchPassword" type="password" placeholder="请输入密码">
@@ -37,19 +37,21 @@
 	</div>
 </template>
 <script>
+import { Toast } from 'vant';
 export default {
 	data() {
 		return {
-			phone: '',
+			loginId: '',
 			password: '',
-			show: false
+			show: false,
+			count:'',
 		}
 	},
 	created() {
-		
+		this.count = this.$store.state.count
 	},
 	updated() {
-		if (this.phone && this.password) {
+		if (this.loginId&& this.password) {
 			if (!this.show) {
 				this.show = true
 			}
@@ -78,7 +80,45 @@ export default {
 		},
 		// 登录账号
 		information() {
-
+			let password = this.$md5(this.password)
+			console.log('password',password)
+			let params = {
+				loginId:this.loginId,
+				password:password
+			}
+			this.$store.dispatch('Login', params)
+				// .then((res) => {
+				// 	Toast.success('登陆成功')
+				// 	this.$router.push({ 
+				// 		path: '/index/myMessage'
+				// 	});
+				// })
+				// .catch((error) => {
+				// 	console.log('1111',error.response); 
+				// });
+			// this.axios({
+			// 	method:'POST',
+			// 	url:'http://192.168.2.124:8080//test/meeting/conference/user/login',
+			// 	data:{
+			// 		loginId:this.loginId,
+			// 		password:password
+			// 	}
+			// })
+			.then((res)=>{
+				if(res.data.code === 200){
+					Toast.success('登陆成功')
+					console.log('res',res)
+					// this.$store.dispatch('user',res)
+					this.$router.push({
+						path: '/index/myMessage',
+						query:{
+							active: 2
+						}
+					})
+				}else{
+					Toast.fail(res.data.msg)
+				}
+			})
 		},
 		// 注册账号
 		jump() {

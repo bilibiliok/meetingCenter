@@ -15,6 +15,10 @@ export default {
 			active: 0
 		}
 	},
+	mounted(){
+		this.active = this.$route.query.active
+		console.log(this.$router)
+	},
 	methods:{
 		changeTab() {
 			if(this.active === 0){

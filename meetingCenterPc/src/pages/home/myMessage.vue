@@ -1,32 +1,124 @@
 <template>
 	<div class="hello">
 		<div class="user">
-			<div class="logo">
+			<div v-if="user" class="logo">
 				<img src="../../assets/cat.jpg" alt="" height="80" width="80">
 			</div>
-			<div class="userMessage">
+			<div v-else class="logo">
+				<img src="../../assets/time.jpg" alt="" height="80" width="80">
+			</div>
+			<div v-if="user" class="userMessage">
 				<div class="userName">
-					<span>名字</span>
+					<span>{{user.name}}</span>
 				</div>
 				<div class="userPhone">
-					<span>17178181717</span>
+					<span>用户ID:{{user.loginId}}</span>
+				</div>
+			</div>
+			<div v-else class="userMessage">
+				<div class="userName">
+					<span>登录/注册</span>
 				</div>
 			</div>
 		</div>
-	
+		<div class="message">
+			<van-cell-group @click="changeMessage">
+				<van-field
+					center
+					clearable
+					readonly
+					label="个人中心"
+				>
+					<van-icon slot="right-icon" name="arrow" />
+				</van-field>
+			</van-cell-group>
+			<van-cell-group>
+				<van-field
+					center
+					clearable
+					readonly
+					label="修改密码"
+				>
+					<van-icon slot="right-icon" name="arrow" />
+				</van-field>
+			</van-cell-group>
+		</div>
+		<div class="safe">
+			<van-cell-group>
+				<van-field
+					@click="rubbish"
+					center
+					clearable
+					readonly
+					label="清除缓存"
+				>
+					<van-icon slot="right-icon" name="arrow" />
+				</van-field>
+			</van-cell-group>
+			<van-cell-group>
+				<van-field
+					center
+					clearable
+					readonly
+					label="关于我们"
+				>
+					<van-icon slot="right-icon" name="arrow" />
+				</van-field>
+			</van-cell-group>
+		</div>
+		<div class="leave">
+			<van-button @click="leaveOut" size="large">退出登录</van-button>
+		</div>
+		<div class="delete">
+			<van-button size="large">账户注销</van-button>
+		</div>
 	</div>
 </template>
 <script>
+import {Toast} from 'vant'
 export default {
 	data() {
 		return {
-			phone:''
+			phone:'',
+			name:'',
+			user:this.$store.state.user
+		}
+	},
+	mounted(){
+		if(!this.$store.state.user){
+			this.$router.push('/login')
+		}
+	},
+	watch:{
+		user(nvl,ovl){
+			if(nvl === ''){
+				this.$router.push({
+				path:'/login'
+			})
+			}
+		}
+	},
+	methods:{
+		changeMessage(){
+			this.$router.push({
+				path:'/showMessage'
+			})
+		},
+		//退出登录
+		leaveOut(){
+			this.$store.commit('logout')
+			this.$router.push('/login')
+		},
+		// 清除缓存
+		rubbish() {
+			Toast.success('清除成功')
 		}
 	}
 }
 </script>
 <style lang="less" scoped>
 	.hello{
+		background:#f5f5f5;
 		.user{
 			display: flex;
 			border-bottom: .5px solid #e8e8e8;
@@ -50,5 +142,18 @@ export default {
 				padding-top: 10px
 			}
 		}
+		.safe{
+			margin-top:10px
+		}
+		.leave{
+			margin-top:10px
+		}
+		.delete{
+			margin-top:10px
+		}
+
 	}
+</style>
+<style>
+	
 </style>

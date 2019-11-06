@@ -6,6 +6,8 @@ const showTab = () => import('../pages/home/showTab')
 const appointment = () => import('../pages/home/appointment')
 const myMessage = () => import('../pages/home/myMessage')
 const register = () => import('../pages/register')
+const showMessage = () => import('../pages/showMessage')
+const addMeeting = () => import('../pages/home/addMeeting')
 
 Vue.use(Router)
 
@@ -48,5 +50,19 @@ export default new Router({
       name: 'register',
       component: register
     },
+    // 修改信息
+    {
+      path: '/showMessage',
+      name: 'showMessage',
+      component: showMessage
+    },
+    // 新增会议
+    {
+      path: '/addMeeting',
+      name: 'addMeeting',
+      component: addMeeting
+    },
+    
   ]
 })
+
