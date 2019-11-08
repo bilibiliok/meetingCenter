@@ -11,7 +11,7 @@ const addMeeting = () => import('../pages/home/addMeeting')
 const meetingList = () => import('../pages/home/meetingList')
 const addMeetingCenter = () => import('../pages/home/addMeetingCenter')
 const missionInfo = () => import('../pages/home/missionInfo')
-
+const myMeeting = () => import('../pages/home/myMeeting')
 
 Vue.use(Router)
 
@@ -83,6 +83,12 @@ export default new Router({
       path: '/missionInfo',
       name: 'missionInfo',
       component: missionInfo
+    },
+    // 我的会议
+    {
+      path: '/myMeeting',
+      name: 'myMeeting',
+      component: myMeeting
     },
     
     

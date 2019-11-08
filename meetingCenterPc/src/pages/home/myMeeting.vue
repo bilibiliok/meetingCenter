@@ -1,22 +1,27 @@
 <template>
     <div class="hello">
          <van-nav-bar
-        title="会议室列表"
+        title="会议列表"
+        style="position:fixed;width:100%;top:0"
         @click-left="onClickLeft"
         @click-right="onClickRight"
         >
             <van-icon color="#000" name="arrow-left" slot="left" />
             <van-icon color="#000" name="plus" slot="right" />
         </van-nav-bar>
+        <van-search style="position:fixed;width:100%;top:40px" placeholder="请输入搜索关键词" v-model="value" />
         <div class="list">
-            <div @click="getMeetingMessage(item.id)" class="listType" v-for="(item) in myMeeting" :key="item.id">
+            <div @click="getMeetingMessage(item.id)" class="listType" v-for="(item,index) in myMeeting" :key="index">
                 <div>
-                    <div class="roomName">会议室名：{{item.roomName}}</div>
-                    <div class="equipment">设备：{{item.equipment}}</div>
-                    <div class="person">会议容纳人数：{{item.maxCapacity}}</div>
-                    <div v-if="item.status === 0" class="person">会议使用情况：已使用</div>
-                    <div v-if="item.status === 1" class="person">会议使用情况：可预约</div>
-                    <div v-if="item.status === 2" class="person">会议使用情况：维修中</div>
+                    <div class="roomName">会议名：{{item.meetingName}}</div>
+                    <div class="equipment">会议部门：{{item.meetingDepartment}}</div>
+                    <div class="equipment">会议发起人：{{item.meetingPersonId}}</div>
+                    <div class="equipment">会议参与人：{{item.meetngParticipantId}}</div>
+                    <div class="equipment">会议开始时间：{{item.meetingStart}}</div>
+                    <div class="person">会议结束时间：{{item.meetingEnd}}</div>
+                    <div v-if="item.meetingStatus == 0" class="person">会议状况：未开始</div>
+                    <div v-if="item.meetingStatus == 1" class="person">会议状况：进行中</div>
+                    <div v-if="item.meetingStatus == 2" class="person">会议状况：已结束</div>
                 </div>
             </div>
         </div>
@@ -27,6 +32,7 @@ import { ImagePreview } from 'vant'
 export default {
     data() {
         return {
+            value: '',
             myMeeting: [],
             pages: 1,
             pageSize: 10
@@ -35,21 +41,41 @@ export default {
     created(){
         this.getMeeting()
     },
+    watch:{
+        value(){
+            this.searchNameChange()
+        }
+    },
     methods:{
+        searchNameChange() {
+			this.isScroll = 0
+			this.pages1 = 1
+			if (window.lazy) {
+				window.clearTimeout(window.lazy)
+			}
+			window.lazy = window.setTimeout(() => {
+				this.pages = 1
+				this.getMeeting()
+			}, 500)
+		},
         //获取获取会议室信息
         getMeeting() {
             this.axios({
                 method:'Post',
-                url:'/test/meeting/conference/room/list',
+                url:'http://192.168.2.118:8080/test/meeting/meetings/meetings/list',
                 data:{
                     current:this.pages,
                     pageSize:this.pageSize,
+                    condition:{//查询条件
+                        meetingPersonId:this.value//会议发起人id
+                    }
                 }
             })
             .then((res) => {
+                console.log('res',res)
                 if(res.data.code === 200&&res.data.data.records && res.data.data.records.length > 0){
                     console.log('res',res)
-                    this.meetingList = [...this.meetingList, ...res.data.data.records]
+                    this.myMeeting = [...this.myMeeting, ...res.data.data.records]
 					this.pages = this.pages + 1
                     
                 }
@@ -87,10 +113,12 @@ export default {
         font-size: 16px;
         background: url('../../assets/meeting1.jpg');
         background-size: 100% 100%;
+        background-attachment: fixed;
         min-height: 100vh;
         color:#fff;
         .list{
             padding: 10px;
+            margin-top: 50px;
             .listType{
                 display: flex;
                 border:.5px solid #e8e8e8;

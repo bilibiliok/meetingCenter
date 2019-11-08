@@ -13,9 +13,23 @@
 			<input placeholder="请确定密码" v-model="userPassword1" type="password">
 			<input placeholder="请输入电话" v-model="userPhone" type="text">
 			<input placeholder="请输入邮箱" v-model="userEmail" type="text">
-			<input placeholder="请输入部门" v-model="department" type="text">
+			<input @click="show = true" placeholder="请选择部门" readonly v-model="department" type="text">
+				<van-popup
+				v-model="show"
+				position="bottom"
+			>
+			</van-popup>
+			
 		</div>
 		<div class="queryMessage" @click="jump">注册</div>	
+		<van-popup v-model="show" position="bottom">
+			<van-picker
+				show-toolbar
+				:columns="departmentList"
+				@cancel="show = false"
+				@confirm="onConfirm"
+			/>
+		</van-popup>
 	</div>
 </template>
 <script>
@@ -23,19 +37,48 @@ import { Toast } from 'vant';
 export default {
 	data() {
 		return {
+			show:false,
 			loginId: '',
 			userName: '',
 			userPassword: '',
 			userPassword1: '',
 			userPhone: '',
 			userEmail: '',
-			department: ''
+			department: '',
+			departmentList:[]
 		}
 	},
 	mounted() {
 		Toast.setDefaultOptions({ duration: 2000 })
+		this.getDepartMent()
 	},
 	methods:{
+		//
+		onConfirm(value,index){
+			console.log(value)
+			console.log(index)
+			this.department = value.departmentName
+			this.show = false
+		},
+		// 获取部门列表、
+		getDepartMent() {
+			this.axios({
+				url:'/test/meeting/conference/department/list',
+				method:'POST',
+				data:{}
+			})
+			.then(res=>{
+				console.log('res',res)
+				const arr = res.data.data.records
+				const department = []
+				arr.forEach((item,index)=>{
+					this.$set(item, 'text', item.departmentName)
+					department.push(item.departmentName)
+				})
+				this.departmentList = arr
+				// his.departmentList = department
+			})
+		},
 		onClickLeft() {
 			this.$router.push('/login')
 		},
@@ -114,6 +157,9 @@ export default {
 						Toast.fail('该用户名已存在')
 					}
 				})
+				.catch(error => {
+					 Toast.fail(error.response.data.message)                }
+				)
 			}
 			
 		},

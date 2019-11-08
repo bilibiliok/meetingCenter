@@ -19,13 +19,24 @@
             />
             <van-field
                 v-model="meetingLocation"
+                readonly
+                @click="showMeeting = true"
                 required
                 clearable
                 label="地点"
                 placeholder="请输入会议地点"
             />
+             <van-field
+                v-model="meetingDepartment"
+                required
+                clearable
+                readonly
+                @click="showTab = true"
+                label="会议部门"
+                placeholder="请选择会议部门"
+            />
             <van-field
-                v-model="meetingPersonId"
+                v-model="user.name"
                 required
                 clearable
                 readonly
@@ -62,13 +73,7 @@
                 right-icon="arrow"
                 placeholder="请选择时间"
             />
-            <van-field
-                v-model="meetingDepartment"
-                required
-                clearable
-                label="会议部门"
-                placeholder="请选择会议部门"
-            />
+           
         </van-cell-group>
         <div class="button">
             <van-button @click="apartment" size="large" type="primary">预约</van-button>
@@ -101,6 +106,22 @@
         @confirm="confirmEndTime"
         />
         </van-popup>
+        <van-popup v-model="showTab" position="bottom">
+			<van-picker
+				show-toolbar
+				:columns="departmentList"
+				@cancel="showTab = false"
+				@confirm="onConfirm"
+			/>
+		</van-popup>
+         <van-popup v-model="showMeeting" position="bottom">
+			<van-picker
+				show-toolbar
+				:columns="meetingList"
+				@cancel="showMeeting = false"
+				@confirm="onConfirmMeeting"
+			/>
+		</van-popup>
     </div>
 </template>
 <script>
@@ -109,11 +130,13 @@ import {Toast,Dialog} from 'vant'
 export default {
     data() {
         return {
+            showTab:false,
+            showMeeting:false,
             show:false,
             showed:false,
             meetingLocation:'',//会议地点
             meetingName:'',//会议名称
-            meetingPersonId:'1',//发起人id
+            meetingPersonId:'',//发起人id
             meetngParticipantId:'1',//参与者id
             meetingStart:'',//开始时间
             meetingEnd:'',//结束时间
@@ -125,15 +148,73 @@ export default {
             minDate: new Date(),
             maxDate: new Date(2099, 10, 1),
             currentDate: new Date(),
-            currentDate1: new Date()
+            currentDate1: new Date(),
+            user:JSON.parse(sessionStorage.getItem('user')),
+            meetingList:[],
+            departmentList:[]
         }
     },
     mounted(){
 		// if(!this.$store.state.user){
 		// 	this.$router.push('/login')
-		// }
+        // }
+        this.getDepartMent()
+        this.getMeeting()
 	},
     methods:{
+        // 确认会议地点
+        onConfirmMeeting(value,index){
+			console.log(value)
+			console.log(index)
+			this.meetingLocation = value.roomName
+			this.showMeeting = false
+        },
+        // 确认部门
+        onConfirm(value,index){
+			console.log(value)
+			console.log(index)
+			this.meetingDepartment = value.departmentName
+			this.showTab = false
+        },
+        // 获取部门信息
+        getDepartMent() {
+			this.axios({
+				url:'/test/meeting/conference/department/list',
+				method:'POST',
+				data:{}
+			})
+			.then(res=>{
+				console.log('res',res)
+				const arr = res.data.data.records
+				const department = []
+				arr.forEach((item,index)=>{
+					this.$set(item, 'text', item.departmentName)
+					department.push(item.departmentName)
+				})
+				this.departmentList = arr
+				// his.departmentList = department
+			})
+        },
+        // 获取会议室信息
+        getMeeting() {
+            this.axios({
+                method:'Post',
+                url:'/test/meeting/conference/room/list',
+                data:{
+                    current:1,
+                    pageSize:9999,
+                }
+            })
+            .then((res) => {
+                if(res.data.code === 200){
+                    console.log('res',res)
+                    this.meetingList = res.data.data.records
+                    this.meetingList.forEach((item,index)=>{
+                        this.$set(item, 'text', item.roomName)
+                    })
+                }
+            })
+        },
         onClickLeft() {
 			this.$router.go(-1)
         },
@@ -212,10 +293,10 @@ export default {
                         meetingName:this.meetingName,
                         meetingDate:'2019-12-31',
                         meetingLocation:this.meetingLocation,
-                        meetingPersonId:this.meetingPersonId,
+                        meetingPersonId:this.user.id,
                         meetngParticipantId:this.meetngParticipantId,
                         meetingStart:this.showStartTime,
-                        meetingEnd:this.meetingEnd,
+                        meetingEnd:this.showEndTime,
                         meetingStatus:0,
                         meetingDepartment:this.meetingDepartment
                     }

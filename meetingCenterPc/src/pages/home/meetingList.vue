@@ -32,7 +32,7 @@ export default {
         return {
             meetingList: [],
             pages: 1,
-            pageSize: 10
+            pageSize: 9999
         }
     },
     created(){
@@ -91,6 +91,7 @@ export default {
         background: url('../../assets/meeting1.jpg');
         background-size: 100% 100%;
         min-height: 100vh;
+        background-attachment: fixed;
         color:#fff;
         .list{
             padding: 10px;
