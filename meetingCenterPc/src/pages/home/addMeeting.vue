@@ -6,7 +6,7 @@
         @click-left="onClickLeft"
         @click-right="onClickRight"
         >
-        <van-icon color="#000" name="arrow-left" slot="left" />
+            <van-icon color="#000" name="arrow-left" slot="left" />
             <van-icon color="#000" name="plus" slot="right" />
         </van-nav-bar>
         <van-cell-group>
@@ -179,10 +179,10 @@ export default {
                 clock += "0";
             clock += hh + ":";
             if (mm < 10) clock += '0'; 
-            // clock += mm + ":";
-            clock += mm     
-            // if (ss < 10) clock += '0'; 
-            // clock += ss; 
+            clock += mm + ":";
+            // clock += mm     
+            if (ss < 10) clock += '0'; 
+            clock += ss; 
             return(clock); 
         },
         formatter(type, value) {
@@ -202,12 +202,12 @@ export default {
         // 预约
         apartment(){
             Dialog.confirm({
-            title: '预约',
-            message: '确定预约吗'
+                title: '预约',
+                message: '确定预约吗'
             }).then(() => {
                 this.axios({
                     method:'POST',
-                    url:'http://192.168.2.133:8080/test/meeting/meetings/meetings',
+                    url:'http://192.168.2.118:8080/test/meeting/meetings/meetings',
                     data:{
                         meetingName:this.meetingName,
                         meetingDate:'2019-12-31',

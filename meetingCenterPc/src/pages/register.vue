@@ -33,8 +33,6 @@ export default {
 		}
 	},
 	mounted() {
-		// console.log(this.axios)
-		// console.log(this.isEmail('11111@qq.com'));
 		Toast.setDefaultOptions({ duration: 2000 })
 	},
 	methods:{
@@ -68,7 +66,7 @@ export default {
 			// let password = this.password
 			let password = this.$md5(this.userPassword)
 			let password1 = this.$md5(this.userPassword1)
-			console.log('password',password)
+			// console.log('password',password)
 			if(this.loginId === ''){
 				Toast('请输入账号')
 			}else if (this.userName === '') {
@@ -110,9 +108,9 @@ export default {
 					if(res.data.code === 200){
 						Toast.success('注册成功')
 						this.$router.push('/login')
-						console.log(res)
+						// console.log(res)
 					}else{
-						console.log(111)
+						// console.log(111)
 						Toast.fail('该用户名已存在')
 					}
 				})

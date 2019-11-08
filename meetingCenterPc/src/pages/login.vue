@@ -48,7 +48,7 @@ export default {
 		}
 	},
 	created() {
-		this.count = this.$store.state.count
+		
 	},
 	updated() {
 		if (this.loginId&& this.password) {
@@ -81,12 +81,12 @@ export default {
 		// 登录账号
 		information() {
 			let password = this.$md5(this.password)
-			console.log('password',password)
+			// console.log('password',password)
 			let params = {
 				loginId:this.loginId,
 				password:password
 			}
-			this.$store.dispatch('Login', params)
+			// this.$store.dispatch('Login', params)
 				// .then((res) => {
 				// 	Toast.success('登陆成功')
 				// 	this.$router.push({ 
@@ -96,19 +96,27 @@ export default {
 				// .catch((error) => {
 				// 	console.log('1111',error.response); 
 				// });
-			// this.axios({
-			// 	method:'POST',
-			// 	url:'http://192.168.2.124:8080//test/meeting/conference/user/login',
-			// 	data:{
-			// 		loginId:this.loginId,
-			// 		password:password
-			// 	}
-			// })
+			this.axios({
+				method:'POST',
+				url:'/test/meeting/conference/user/login',
+				data:{
+					loginId:this.loginId,
+					password:password
+				}
+			})
 			.then((res)=>{
 				if(res.data.code === 200){
-					Toast.success('登陆成功')
-					console.log('res',res)
-					// this.$store.dispatch('user',res)
+					Toast.success('登录成功')
+					// console.log('res',res.data.data[0])
+					this.count = res.data.data[0]
+					let objStr = JSON.stringify(this.count) //先转化为键值对模式
+					sessionStorage.setItem('user',objStr)
+					
+					// let a = sessionStorage.getItem('user')
+					// console.log('a',a)
+					let obj1 = JSON.parse(sessionStorage.getItem('user'))
+					// console.log('obj1',obj1.name)
+					this.$store.dispatch('user',res)
 					this.$router.push({
 						path: '/index/myMessage',
 						query:{

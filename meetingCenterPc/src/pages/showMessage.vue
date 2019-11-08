@@ -28,10 +28,11 @@ export default {
 			// userPhone: '',
 			// userEmail: '',
             // department: '',
-            user:this.$store.state.user
+            user:''
 		}
 	},
 	mounted() {
+		this.user = JSON.parse(sessionStorage.getItem('user'))
 		// console.log(this.axios)
 		// console.log(this.isEmail('11111@qq.com'));
 		Toast.setDefaultOptions({ duration: 2000 })
@@ -101,7 +102,9 @@ export default {
 						Toast.success('修改成功')
 						console.log(res)
 						console.log('1111',this.user)
-						sessionStorage.setItem('user',this.user)
+						sessionStorage.removeItem('user');
+						let userMessage = JSON.stringify(this.user)
+						sessionStorage.setItem('user',userMessage)
 					}else{
 						Toast.fail('修改失败')
 					}

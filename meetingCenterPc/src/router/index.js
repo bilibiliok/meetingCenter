@@ -8,6 +8,10 @@ const myMessage = () => import('../pages/home/myMessage')
 const register = () => import('../pages/register')
 const showMessage = () => import('../pages/showMessage')
 const addMeeting = () => import('../pages/home/addMeeting')
+const meetingList = () => import('../pages/home/meetingList')
+const addMeetingCenter = () => import('../pages/home/addMeetingCenter')
+const missionInfo = () => import('../pages/home/missionInfo')
+
 
 Vue.use(Router)
 
@@ -62,6 +66,26 @@ export default new Router({
       name: 'addMeeting',
       component: addMeeting
     },
+    // 会议室列表
+    {
+      path: '/meetingList',
+      name: 'meetingList',
+      component: meetingList
+    },
+    // 新增会议室
+    {
+      path: '/addMeetingCenter',
+      name: 'addMeetingCenter',
+      component: addMeetingCenter
+    },
+    //会议室详情
+    {
+      path: '/missionInfo',
+      name: 'missionInfo',
+      component: missionInfo
+    },
+    
+    
     
   ]
 })

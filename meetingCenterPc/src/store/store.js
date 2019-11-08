@@ -48,7 +48,7 @@ const actions = {
             // 向后端发送请求，验证用户名密码是否正确，请求成功接收后端返回的token值，利用commit修改store的state属性，并将token存放在localStorage中
             axios({
                 method:'POST',
-                url:'http://192.168.2.124:8080//test/meeting/conference/user/login',
+                url:'/test/meeting/conference/user/login',
                 data:user
             })
             .then(resp => {

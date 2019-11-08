@@ -69,23 +69,25 @@
 		<div class="leave">
 			<van-button @click="leaveOut" size="large">退出登录</van-button>
 		</div>
-		<div class="delete">
+		<div @click="deleteMessage" class="delete">
 			<van-button size="large">账户注销</van-button>
 		</div>
 	</div>
 </template>
 <script>
-import {Toast} from 'vant'
+import {Toast,Dialog} from 'vant'
 export default {
 	data() {
 		return {
 			phone:'',
 			name:'',
-			user:this.$store.state.user
+			user:''
 		}
 	},
 	mounted(){
-		if(!this.$store.state.user){
+		this.user = JSON.parse(sessionStorage.getItem('user')) //转化为json字符串之后再转回来
+		if(!this.user){
+			Toast.fail('请先完成账号登录')
 			this.$router.push('/login')
 		}
 	},
@@ -106,12 +108,36 @@ export default {
 		},
 		//退出登录
 		leaveOut(){
-			this.$store.commit('logout')
+			// this.$store.commit('logout')
+			sessionStorage.clear()
 			this.$router.push('/login')
 		},
 		// 清除缓存
 		rubbish() {
 			Toast.success('清除成功')
+		},
+		// 账户注销
+		deleteMessage() {
+			Dialog.confirm({
+			title: '注销',
+			message: '一旦注销将无法找回账号，确定要注销吗？'
+			}).then(() => {
+				this.axios({
+					method:'DELETE',
+					url:`/test/meeting/conference/user/${this.user.id}`,
+				})
+				.then((res) => {
+					if(res.data.code === 200){
+						Toast.success('注销成功')
+						sessionStorage.clear()
+						this.$router.push('/login')
+					} else {
+						Toast.fail('注销失败')
+					}
+				})
+			}).catch(() => {
+			// on cancel
+			});
 		}
 	}
 }

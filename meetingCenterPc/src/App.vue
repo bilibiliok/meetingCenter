@@ -22,4 +22,7 @@ export default {
   .van-cell{
     font-size: 16px
   }
+  #app{
+    font-size: 16px
+  }
 </style>

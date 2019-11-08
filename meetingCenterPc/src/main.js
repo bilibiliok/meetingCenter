@@ -18,7 +18,7 @@ Vue.prototype.axios = axios
 Vue.prototype.qs = qs
 axios.defaults.baseURL = ''
 Vue.use(Vant)
-axios.defaults.baseURL = 'http://192.168.2.124:8080/'
+axios.defaults.baseURL = 'http://192.168.2.121:8080/'
 
 /* eslint-disable no-new */
 new Vue({
