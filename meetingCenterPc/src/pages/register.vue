@@ -122,6 +122,8 @@ export default {
 				Toast('请输入邮箱')
 			} else if(this.department === ''){
 				Toast('请输入部门')
+			} else if(this.loginId.length <6){
+				Toast('用户账号至少6位')
 			} else if(password1 !== password){
 				Toast('请确认输入密码一致')
 			} else if(this.isPhoneAvailable(this.userPhone) === false){

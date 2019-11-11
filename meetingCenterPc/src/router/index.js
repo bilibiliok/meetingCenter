@@ -12,6 +12,7 @@ const meetingList = () => import('../pages/home/meetingList')
 const addMeetingCenter = () => import('../pages/home/addMeetingCenter')
 const missionInfo = () => import('../pages/home/missionInfo')
 const myMeeting = () => import('../pages/home/myMeeting')
+const centerMessage = () => import('../pages/home/centerMessage')
 
 Vue.use(Router)
 
@@ -90,7 +91,12 @@ export default new Router({
       name: 'myMeeting',
       component: myMeeting
     },
-    
+    // 该会议室存在的会议
+    {
+      path: '/centerMessage',
+      name: 'centerMessage',
+      component: centerMessage
+    },
     
     
   ]

@@ -9,8 +9,8 @@
             <van-icon color="#000" name="plus" slot="right" />
         </van-nav-bar>
         <div class="list">
-            <div @click="getMeetingMessage(item.id)" class="listType" v-for="(item) in meetingList" :key="item.id">
-                <div @click.stop="showMessage(item.picture)" class="img">
+            <div @click="getMeetingMessage(item.id)" class="listType" v-for="(item,index) in meetingList" :key="item.id">
+                <div @click.stop="showMessage(item.picture,index)" class="img">
                     <img width="90" height="90" :src="item.picture" alt="暂无图片显示">
                 </div>
                 <div>
@@ -18,15 +18,16 @@
                     <div class="equipment">设备：{{item.equipment}}</div>
                     <div class="person">会议容纳人数：{{item.maxCapacity}}</div>
                     <div v-if="item.status === 0" class="person">会议使用情况：已使用</div>
-                    <div v-if="item.status === 1" class="person">会议使用情况：可预约</div>
-                    <div v-if="item.status === 2" class="person">会议使用情况：维修中</div>
+                    <div style="color:#22c8d8" v-if="item.status === 1" class="person">会议使用情况：可预约</div>
+                    <div style="color:red" v-if="item.status === 2" class="person">会议使用情况：维修中</div>
+                    <div @click.stop="checkoutMsg(item,index)" class="person check">查看任务状态</div>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script>
-import { ImagePreview } from 'vant'
+import { ImagePreview,Toast } from 'vant'
 export default {
     data() {
         return {
@@ -81,6 +82,30 @@ export default {
                     picture
                 ],
             })
+        },
+        // 获取会议记录
+        checkoutMsg(item,index){
+            console.log(item)
+            this.axios({
+                url:'/test/meeting/conference/room/meetings',
+                method:'POST',
+                data:{
+                    id:item.id
+                }
+            }).then((res) =>{
+                // console.log(res)
+                if(res.data.code === 900){
+                    Toast(res.data.msg)
+                }else{
+                    this.$router.push({
+                        path:'/centerMessage',
+                        query:{
+                            id:item.id,
+                            name:item.roomName
+                        }
+                    })
+                }
+            })
         }
     }
 }
@@ -109,6 +134,12 @@ export default {
             }
             .person{
                 padding-top: 10px
+            }
+            .check{
+                background: #22c8d8;
+                color: #fff;
+                padding-bottom: 10px;
+                text-align: center
             }
         }
         }

@@ -44,10 +44,11 @@
                 placeholder="请输入会议发起人"
             />
              <van-field
-                v-model="meetngParticipantId"
+                v-model="checkedPerson"
                 required
                 readonly
                 clearable
+                @click="toShowPerson"
                 label="会议参与人"
                 placeholder="请选择会议参与人"
             />
@@ -122,6 +123,21 @@
 				@confirm="onConfirmMeeting"
 			/>
 		</van-popup>
+        <van-popup
+        v-model="showPerson"
+        position="right"
+        :style="{ height: '100%',width: '50%' }"
+        >
+        <!-- <van-checkbox-group v-model="result">
+            <van-checkbox name="a">复选框 a</van-checkbox>
+            <van-checkbox name="b">复选框 b</van-checkbox>
+            <van-checkbox name="c">复选框 c</van-checkbox>
+        </van-checkbox-group> -->
+        <div class="person" v-for="(item,index) in departmentNamePerson" :key="item.id">
+            <van-checkbox @click="choosePerson(item,index)" v-model="item.checked">{{item.name}}</van-checkbox>
+        </div>
+        <div></div>
+        </van-popup>
     </div>
 </template>
 <script>
@@ -130,6 +146,9 @@ import {Toast,Dialog} from 'vant'
 export default {
     data() {
         return {
+            // result: ['a', 'b'],
+            // checked:false,
+            showPerson:false,
             showTab:false,
             showMeeting:false,
             show:false,
@@ -137,10 +156,11 @@ export default {
             meetingLocation:'',//会议地点
             meetingName:'',//会议名称
             meetingPersonId:'',//发起人id
-            meetngParticipantId:'1',//参与者id
+            meetngParticipantId:'',//参与者id
             meetingStart:'',//开始时间
             meetingEnd:'',//结束时间
             meetingDepartment:'',//会议部门
+            meetingDepartmentId:'',// 会议部门id
             showEndTime:'',
             showStartTime:'',
             minHour: 10,
@@ -151,7 +171,12 @@ export default {
             currentDate1: new Date(),
             user:JSON.parse(sessionStorage.getItem('user')),
             meetingList:[],
-            departmentList:[]
+            departmentList:[],
+            meetingValue:'',
+            departmentValue:'',
+            departmentNamePerson:[], //部门所有人
+            checkedPerson:'',// 被选中的人
+            checkPersonId:''//被选中人的ID
         }
     },
     mounted(){
@@ -160,21 +185,28 @@ export default {
         // }
         this.getDepartMent()
         this.getMeeting()
-	},
+    },
+    watch:{
+        
+    },
     methods:{
         // 确认会议地点
         onConfirmMeeting(value,index){
-			console.log(value)
-			console.log(index)
-			this.meetingLocation = value.roomName
-			this.showMeeting = false
+            if(value.status === 0){
+                Toast.fail('该会议室正在使用')
+            }else if (value.status === 2) {
+                 Toast.fail('该会议室正在维修')
+            } else {
+                this.meetingLocation = value.roomName
+                this.showMeeting = false
+                this.meetingValue = value
+            }
         },
         // 确认部门
         onConfirm(value,index){
-			console.log(value)
-			console.log(index)
 			this.meetingDepartment = value.departmentName
-			this.showTab = false
+            this.departmentValue = value
+            this.getDepartmentPeople()
         },
         // 获取部门信息
         getDepartMent() {
@@ -184,7 +216,7 @@ export default {
 				data:{}
 			})
 			.then(res=>{
-				console.log('res',res)
+				// console.log('res',res)
 				const arr = res.data.data.records
 				const department = []
 				arr.forEach((item,index)=>{
@@ -207,7 +239,7 @@ export default {
             })
             .then((res) => {
                 if(res.data.code === 200){
-                    console.log('res',res)
+                    // console.log('res',res)
                     this.meetingList = res.data.data.records
                     this.meetingList.forEach((item,index)=>{
                         this.$set(item, 'text', item.roomName)
@@ -215,11 +247,58 @@ export default {
                 }
             })
         },
+        // 获取用户信息
+        getDepartmentPeople(){
+            this.axios({
+                url:'/test/meeting/conference/department/personnels',
+                method:'post',
+                data:{
+                    departmentName:this.departmentValue.departmentName
+                }
+            })
+            .then((res) =>{
+                if(res.data.code === 200){
+                    // console.log(res.data.data)
+                    this.departmentNamePerson = res.data.data
+                    this.departmentNamePerson.forEach((item,index)=>{
+                        this.$set(item, 'checked', false)
+                    })
+                    this.showTab = false
+                } else if(res.data.code === 900){
+                    Toast.fail(res.data.msg)
+                }
+            })
+        },
+        // 选择客户信息
+        choosePerson(item,index){
+            // console.log(index)
+            item.checked = !item.checked
+            // console.log(item.checked)
+            const choosePerson = []
+            const choosePersonid = []
+            this.departmentNamePerson.forEach((ite,ind) =>{
+                if(ite.checked === true){
+                    choosePerson.push(ite.name)
+                    choosePersonid.push(ite.id)
+                    // console.log('choosePerson',choosePerson)
+                    // console.log('choosePersonid',choosePersonid)
+                    this.checkedPerson = choosePerson.join(',')
+                    this.checkPersonId = choosePersonid.join(',')
+                }
+            })
+        },
+        toShowPerson(){
+            if(this.departmentNamePerson.length === 0){
+                Toast.fail('请先选择会议部门')
+            }else{
+                this.showPerson = true
+            }
+        },
         onClickLeft() {
 			this.$router.go(-1)
         },
         onClickRight() {
-			console.log(1)
+			// console.log(1)
         },
         //开始时间
         changeStartTime(){
@@ -288,21 +367,25 @@ export default {
             }).then(() => {
                 this.axios({
                     method:'POST',
-                    url:'http://192.168.2.118:8080/test/meeting/meetings/meetings',
+                    url:'http://192.168.2.114:8080/test/meeting/meetings/meetings',
                     data:{
                         meetingName:this.meetingName,
-                        meetingDate:'2019-12-31',
-                        meetingLocation:this.meetingLocation,
+                        meetingRoomName:this.meetingLocation,
+                        meetingRoomId:this.meetingValue.id,
+                        meetingPersonName:this.user.name,
                         meetingPersonId:this.user.id,
-                        meetngParticipantId:this.meetngParticipantId,
+                        meetingParticipantName:this.checkedPerson,
+                        meetngParticipantId:this.checkPersonId,
                         meetingStart:this.showStartTime,
                         meetingEnd:this.showEndTime,
                         meetingStatus:0,
-                        meetingDepartment:this.meetingDepartment
+                        meetingDepartment:this.meetingDepartment,
+                        meetingDepartmentId:this.departmentValue.id
                     }
                 }).then((res)=>{
                     if(res.data.code === 200){
                         Toast.success('预约成功，正在审核')
+                        this.$router.push('/myMeeting')
                     } else{
                         Toast.fail(res.data.msg)
                     }
@@ -317,5 +400,9 @@ export default {
 <style lang="less" scoped>
     .hello{
         min-height: 100vh;
+    }
+    .person{
+        text-align: right;
+        padding: .1rem
     }
 </style>

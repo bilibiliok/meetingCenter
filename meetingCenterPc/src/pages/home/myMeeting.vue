@@ -15,8 +15,8 @@
                 <div>
                     <div class="roomName">会议名：{{item.meetingName}}</div>
                     <div class="equipment">会议部门：{{item.meetingDepartment}}</div>
-                    <div class="equipment">会议发起人：{{item.meetingPersonId}}</div>
-                    <div class="equipment">会议参与人：{{item.meetngParticipantId}}</div>
+                    <div class="equipment">会议发起人：{{item.meetingPersonName}}</div>
+                    <div class="equipment">会议参与人：{{item.meetingParticipantName}}</div>
                     <div class="equipment">会议开始时间：{{item.meetingStart}}</div>
                     <div class="person">会议结束时间：{{item.meetingEnd}}</div>
                     <div v-if="item.meetingStatus == 0" class="person">会议状况：未开始</div>
@@ -62,7 +62,7 @@ export default {
         getMeeting() {
             this.axios({
                 method:'Post',
-                url:'http://192.168.2.118:8080/test/meeting/meetings/meetings/list',
+                url:'http://192.168.2.114:8080/test/meeting/meetings/meetings/list',
                 data:{
                     current:this.pages,
                     pageSize:this.pageSize,
