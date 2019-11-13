@@ -14,6 +14,7 @@
             <div @click="getMeetingMessage(item.id)" class="listType" v-for="(item,index) in myMeeting" :key="index">
                 <div>
                     <div class="roomName">会议名：{{item.meetingName}}</div>
+                    <div class="equipment">会议地点：{{item.meetingRoomName}}</div>
                     <div class="equipment">会议部门：{{item.meetingDepartment}}</div>
                     <div class="equipment">会议发起人：{{item.meetingPersonName}}</div>
                     <div class="equipment">会议参与人：{{item.meetingParticipantName}}</div>
@@ -35,7 +36,7 @@ export default {
             value: '',
             myMeeting: [],
             pages: 1,
-            pageSize: 10
+            pageSize: 9999
         }
     },
     created(){
@@ -62,7 +63,7 @@ export default {
         getMeeting() {
             this.axios({
                 method:'Post',
-                url:'http://192.168.2.114:8080/test/meeting/meetings/meetings/list',
+                url:'http://192.168.0.108:8080/test/meeting/meetings/meetings/list',
                 data:{
                     current:this.pages,
                     pageSize:this.pageSize,
@@ -91,7 +92,7 @@ export default {
         // 会议详情
         getMeetingMessage(id){
             this.$router.push({
-                path: '/missionInfo',
+                path: '/meetingInfo',
                 query:{
                     id: id
                 }
@@ -118,7 +119,7 @@ export default {
         color:#fff;
         .list{
             padding: 10px;
-            margin-top: 50px;
+            margin-top: 100px;
             .listType{
                 display: flex;
                 border:.5px solid #e8e8e8;

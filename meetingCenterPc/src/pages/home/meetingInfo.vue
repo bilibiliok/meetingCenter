@@ -1,7 +1,7 @@
 <template>
     <div class="hello">
         <van-nav-bar
-        title="预约"
+        title="修改"
         right-plus
         @click-left="onClickLeft"
         @click-right="onClickRight"
@@ -11,24 +11,24 @@
         </van-nav-bar>
         <van-cell-group>
             <van-field
-                v-model="meetingName"
-                @blur.prevent="changeBlur()"
+                v-model="getMission.meetingName"
                 required
                 clearable
                 label="会议名"
                 placeholder="请输入会议名"
             />
             <van-field
-                v-model="meetingLocation"
+                v-model="getMission.meetingRoomName"
                 readonly
-                @click="showMeeting = true"
                 required
                 clearable
                 label="地点"
                 placeholder="请输入会议地点"
             />
+                <!-- @click="showMeeting = true" -->
+
              <van-field
-                v-model="meetingDepartment"
+                v-model="getMission.meetingDepartment"
                 required
                 clearable
                 readonly
@@ -45,7 +45,7 @@
                 placeholder="请输入会议发起人"
             />
              <van-field
-                v-model="checkedPerson"
+                v-model="getMission.meetingParticipantName"
                 required
                 readonly
                 clearable
@@ -55,7 +55,7 @@
             />
             <van-field
                 @click="changeStartTime"
-                v-model="showStartTime"
+                v-model="getMission.meetingStart"
                 required
                 readonly
                 clearable
@@ -67,22 +67,21 @@
             </van-field>
             <van-field
                 @click="changeEndTime"
-                v-model="showEndTime"
+                v-model="getMission.meetingEnd"
                 required
                 clearable
                 readonly
                 label="会议结束时间"
                 right-icon="arrow"
                 placeholder="请选择时间"
-            />
-           
+            /> 
         </van-cell-group>
         <div class="button">
-            <van-button @click="apartment" size="large" type="primary">预约</van-button>
+            <van-button @click="changeMessage" size="large" type="primary">修改</van-button>
         </div>
         <van-popup
-        v-model="show"
-        position="bottom"
+            v-model="show"
+            position="bottom"
         >
         <van-datetime-picker
         v-model="currentDate"
@@ -129,15 +128,9 @@
         position="right"
         :style="{ height: '100%',width: '50%' }"
         >
-        <!-- <van-checkbox-group v-model="result">
-            <van-checkbox name="a">复选框 a</van-checkbox>
-            <van-checkbox name="b">复选框 b</van-checkbox>
-            <van-checkbox name="c">复选框 c</van-checkbox>
-        </van-checkbox-group> -->
         <div class="person" v-for="(item,index) in departmentNamePerson" :key="item.id">
             <van-checkbox @click="choosePerson(item,index)" v-model="item.checked">{{item.name}}</van-checkbox>
         </div>
-        <div></div>
         </van-popup>
     </div>
 </template>
@@ -177,31 +170,48 @@ export default {
             departmentValue:'',
             departmentNamePerson:[], //部门所有人
             checkedPerson:'',// 被选中的人
-            checkPersonId:''//被选中人的ID
+            checkPersonId:'',//被选中人的ID
+            getMission:'',
+            meetingRoomId:'',
+            meetingDepartmentId:'',
+            meetngParticipantId:'',
+            startMessage:''
         }
     },
     mounted(){
 		// if(!this.$store.state.user){
 		// 	this.$router.push('/login')
         // }
+        this.geitMeetingMessage()
         this.getDepartMent()
         this.getMeeting()
-    },
-    watch:{
-        
+        this.meetingRoomId = this.getMission.meetingRoomId
+        this.meetingDepartmentId = this.getMission.meetingDepartmentId
+        this.meetngParticipantId = this.getMission.meetngParticipantId
+        // 获取人员信息
     },
     methods:{
-        changeBlur() {
-			const u = navigator.userAgent
-			// const app = navigator.appVersion
-			const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
-			if (isIOS) {
-				setTimeout(() => {
-					const scrollHeight = document.documentElement.scrollTop || document.body.scrollTop || 0
-					window.scrollTo(0, Math.max(scrollHeight - 1, 0))
-				}, 200)
-			}
-		},
+        // 获取会议信息
+        geitMeetingMessage(){
+            this.axios({
+                method:'GET',
+                url:`http://192.168.0.108:8080/test/meeting/meetings/meetings/${this.$route.query.id}`
+            })
+            .then((res) =>{
+                if(res.data.code ===200){
+                    console.log(res)
+                    this.getMission = res.data.data
+                    const nowTime = +new Date(this.getMission.meetingStart)
+                    console.log(nowTime);
+                    const time = +new Date()
+                    if(nowTime<time){
+                        Toast.fail('会议时间已过，无法修改')
+                        this.$router.go(-1)
+                    }
+                    this.getDepartmentPeople()
+                }
+            })
+        },
         // 确认会议地点
         onConfirmMeeting(value,index){
             if(value.status === 0){
@@ -209,16 +219,20 @@ export default {
             }else if (value.status === 2) {
                  Toast.fail('该会议室正在维修')
             } else {
-                this.meetingLocation = value.roomName
+                this.getMission.meetingRoomName = value.roomName
                 this.showMeeting = false
                 this.meetingValue = value
+                this.meetingDepartmentId = this.meetingValue.id
             }
         },
         // 确认部门
         onConfirm(value,index){
-			this.meetingDepartment = value.departmentName
+            this.getMission.meetingDepartment = value.departmentName
+            this.getMission.meetingDepartmentId = value.id
             this.departmentValue = value
             this.getDepartmentPeople()
+            this.getMission.meetingParticipantName = ''
+            this.getMission.meetingParticipantId = ''
         },
         // 获取部门信息
         getDepartMent() {
@@ -265,7 +279,7 @@ export default {
                 url:'/test/meeting/conference/department/personnels',
                 method:'post',
                 data:{
-                    departmentName:this.departmentValue.departmentName
+                    departmentName:this.getMission.meetingDepartment
                 }
             })
             .then((res) =>{
@@ -295,11 +309,14 @@ export default {
                     // console.log('choosePerson',choosePerson)
                     // console.log('choosePersonid',choosePersonid)
                     this.checkedPerson = choosePerson.join(',')
+                    this.getMission.meetingParticipantName = this.checkedPerson
                     this.checkPersonId = choosePersonid.join(',')
+                    this.getMission.meetingParticipantId = this.choosePersonid
                 }
             })
         },
         toShowPerson(){
+            console.log(this.departmentNamePerson)
             if(this.departmentNamePerson.length === 0){
                 Toast.fail('请先选择会议部门')
             }else{
@@ -316,20 +333,24 @@ export default {
         changeStartTime(){
             this.show = true
             this.showStartTime = this.curentTime(this.currentDate)
+            this.getMission.meetingStart = this.showStartTime
         },
         //结束时间
         changeEndTime(){
             this.showed = true
             this.showEndTime = this.curentTime(this.currentDate1)
+            this.getMission.meetingEnd = this.showEndTime
         },
         //确认开始时间
         confirmStartTime(){
             this.showStartTime = this.curentTime(this.currentDate)
+            this.getMission.meetingStart = this.showStartTime
             this.show = false
         },
         // 确认结束时间
         confirmEndTime(){
             this.showEndTime = this.curentTime(this.currentDate1)
+            this.getMission.meetingEnd = this.showEndTime
             this.showed = false
         },
         curentTime(time){ 
@@ -372,49 +393,70 @@ export default {
             return value;
         },
         // 预约
-        apartment(){
-            const nowTime = +new Date(this.currentDate)
+        // 修改时间
+        changeTime(){
+            const nowTime = +new Date(this.getMission.meetingStart)
             console.log(nowTime);
-            const endTime = +new Date(this.currentDate1)
-            if(this.meetingName === ''){
+            const endTime = +new Date(this.getMission.meetingEnd)
+            if(nowTime>endTime){
+                Toast.fail('会议开始时间不得大于结束时间')
+            }else{
+                this.axios({
+                    method:'put',
+                    url:'http://192.168.0.108:8080/test/meeting/meetings/meetings/important',
+                    data:{
+                        id:this.getMission.id,
+                        meetingStart:this.getMission.meetingStart,
+                        meetingEnd:this.getMission.meetingEnd,
+                    }
+                }).then((res) =>{
+                    if(res.data.code === 200){
+                        console.log('修改成功')
+                        this.startMessage = 1
+                    }else{
+                        Toast.fail(res.data.msg)
+                        this.startMessage = 0
+                    }
+                }).catch((error) =>{
+                    console.log(error)
+                })
+            }
+        },
+        // 修改信息
+        changeMessage(){
+            this.changeTime()
+            if(this.getMission.meetingName === ''){
                 Toast.fail('请输入会议名')
-            } else if(this.meetingLocation === ''){
+            } else if(this.getMission.meetingRoomName === ''){
                 Toast.fail('请选择会议室')
-            } else if(this.meetingDepartment === ''){
+            } else if(this.getMission.meetingDepartment === ''){
                 Toast.fail('请选择部门')
-            } else if(this.checkedPerson === ''){
+            } else if(this.getMission.meetingParticipantName === ''){
                 Toast.fail('请选择会议参与人')
-            } else if(this.showStartTime === ''){
-                Toast.fail('请选择开始时间')
-            } else if(this.showEndTime === ''){
-                Toast.fail('请选择结束时间')
-            } else if(nowTime>=endTime){
-                Toast.fail('结束时间不得在开始时间之前')
             } else{
                 Dialog.confirm({
-                    title: '预约',
-                    message: '确定预约吗？'
+                    title: '修改',
+                    message: '确定修改吗？'
                 }).then(() => {
                     this.axios({
-                        method:'POST',
-                        url:'http://192.168.0.108:8080/test/meeting/meetings/meetings',
+                        method:'put',
+                        url:'http://192.168.0.108:8080/test/meeting/meetings/meetings/base',
                         data:{
-                            meetingName:this.meetingName,
-                            meetingRoomName:this.meetingLocation,
-                            meetingRoomId:this.meetingValue.id,
+                            id:this.getMission.id,
+                            meetingName:this.getMission.meetingName,
+                            meetingRoomName:this.getMission.meetingRoomName,
+                            meetingRoomId:this.meetingRoomId,
                             meetingPersonName:this.user.name,
                             meetingPersonId:this.user.id,
-                            meetingParticipantName:this.checkedPerson,
-                            meetngParticipantId:this.checkPersonId,
-                            meetingStart:this.showStartTime,
-                            meetingEnd:this.showEndTime,
+                            meetingParticipantName:this.getMission.meetingParticipantName,
+                            meetngParticipantId:this.getMission.meetngParticipantId,
                             meetingStatus:0,
-                            meetingDepartment:this.meetingDepartment,
-                            meetingDepartmentId:this.departmentValue.id
+                            meetingDepartment:this.getMission.meetingDepartment,
+                            meetingDepartmentId:this.getMission.meetingDepartmentId
                         }
                     }).then((res)=>{
                         if(res.data.code === 200){
-                            Toast.success('预约成功，正在审核')
+                            Toast.success('修改成功，正在审核')
                             this.$router.push('/myMeeting')
                         } else{
                             Toast.fail(res.data.msg)
@@ -435,8 +477,5 @@ export default {
     .person{
         text-align: right;
         padding: .1rem
-    }
-    .button{
-        margin-top: 50px
     }
 </style>

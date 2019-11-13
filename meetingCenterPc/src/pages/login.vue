@@ -16,7 +16,7 @@
 			</div>
 		</div>
 		<div class="login">
-			<div :class="['queryMessage',{'search':show}]" @click="information">登录</div>
+			<div @keyup.enter.native="information" :class="['queryMessage',{'search':show}]" @click="information">登录</div>
 			<div class="register">没有账号？<span @click="jump">立即注册</span></div>
 		</div>
 		<div class="otherway">

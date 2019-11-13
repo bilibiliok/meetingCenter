@@ -4,33 +4,11 @@
 			title="首页"
 			left-arrow
 		/>
-		<!-- <div class="all" >
-			<div @click="$router.push('/meetingList')" class="function">
-				<span style="display:block;padding-left:10px"><van-icon size="50" name="label-o" /></span>
-				<span>会议室列表</span>
-			</div>
-			<div class="function">
-				<span style="display:block;padding-left:10px"><van-icon size="50" name="notes-o" /></span>
-				<span>会议记录</span>
-			</div>
-			<div class="function">
-				<span style="display:block;padding-left:10px"><van-icon size="50" name="friends-o" /></span>
-				<span>我的会议</span>
-			</div>
-			<div class="function">
-				<span style="display:block;padding-left:10px"><van-icon size="50" name="todo-list-o" /></span>
-				<span>我的日历</span>
-			</div>
-			<div @click="addMeeting" class="function">
-				<span style="display:block;padding-left:10px"><van-icon size="50" name="clock-o" /></span>
-				<span>预约会议</span>
-			</div>
-		</div> -->
 		<van-grid :column-num="3">
 			<van-grid-item @click="$router.push('/meetingList')" icon="label-o" text="会议室列表" />
 			<van-grid-item icon="notes-o" text="会议记录" />
 			<van-grid-item @click="myMeeting" icon="friends-o" text="我的会议" />
-			<van-grid-item icon="todo-list-o" text="我的日历" />
+			<van-grid-item @click="$router.push('/myDateTime')" icon="todo-list-o" text="我的日历" />
 			<van-grid-item @click="addMeeting" icon="clock-o" text="预约会议" />
 		</van-grid>
 		<!-- <div class="function">

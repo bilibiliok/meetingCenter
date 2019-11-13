@@ -40,11 +40,11 @@ export default {
         },
         checkoutMsg(){
             this.axios({
-                url:'/test/meeting/conference/room/meetings',
-                method:'POST',
-                data:{
-                    id:this.$route.query.id
-                }
+                url:`/test/meeting/conference/room/meetings/${this.$route.query.id}`,
+                method:'Get',
+                // data:{
+                //     id:this.$route.query.id
+                // }
             }).then((res) =>{
                 // console.log(res)
                 if(res.data.code === 900){

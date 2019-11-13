@@ -87,11 +87,11 @@ export default {
         checkoutMsg(item,index){
             console.log(item)
             this.axios({
-                url:'/test/meeting/conference/room/meetings',
-                method:'POST',
-                data:{
-                    id:item.id
-                }
+                url:`/test/meeting/conference/room/meetings/${item.id}`,
+                method:'get',
+                // data:{
+                //     id:'1'
+                // }
             }).then((res) =>{
                 // console.log(res)
                 if(res.data.code === 900){

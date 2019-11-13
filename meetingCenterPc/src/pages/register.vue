@@ -7,12 +7,12 @@
 			<van-icon class="icon" @click="onClickLeft" color="white" size="30" name="arrow-left" />
 		</div>
 		<div class="message">
-			<input placeholder="请输入账号"  oninput="value=value.replace(/[^\d]/g,'')" v-model="loginId" type="text">
-			<input placeholder="请输入用户名" v-model="userName" type="text">
-			<input placeholder="请输入密码" v-model="userPassword" type="password">
-			<input placeholder="请确定密码" v-model="userPassword1" type="password">
-			<input placeholder="请输入电话" v-model="userPhone" type="text">
-			<input placeholder="请输入邮箱" v-model="userEmail" type="text">
+			<input  @blur.prevent="changeBlur()" placeholder="请输入账号"  oninput="value=value.replace(/[^\d]/g,'')" v-model="loginId" type="text">
+			<input  @blur.prevent="changeBlur()" placeholder="请输入用户名" v-model="userName" type="text">
+			<input  @blur.prevent="changeBlur()" placeholder="请输入密码" v-model="userPassword" type="password">
+			<input  @blur.prevent="changeBlur()" placeholder="请确定密码" v-model="userPassword1" type="password">
+			<input  @blur.prevent="changeBlur()" placeholder="请输入电话" v-model="userPhone" type="text">
+			<input  @blur.prevent="changeBlur()" placeholder="请输入邮箱" v-model="userEmail" type="text">
 			<input @click="show = true" placeholder="请选择部门" readonly v-model="department" type="text">
 				<van-popup
 				v-model="show"
@@ -53,7 +53,18 @@ export default {
 		this.getDepartMent()
 	},
 	methods:{
-		//
+		//解决ios键盘弹起页面无法恢复原样的问题
+		changeBlur() {
+			const u = navigator.userAgent
+			// const app = navigator.appVersion
+			const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
+			if (isIOS) {
+				setTimeout(() => {
+					const scrollHeight = document.documentElement.scrollTop || document.body.scrollTop || 0
+					window.scrollTo(0, Math.max(scrollHeight - 1, 0))
+				}, 200)
+			}
+		},
 		onConfirm(value,index){
 			console.log(value)
 			console.log(index)

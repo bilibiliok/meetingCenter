@@ -13,6 +13,10 @@ const addMeetingCenter = () => import('../pages/home/addMeetingCenter')
 const missionInfo = () => import('../pages/home/missionInfo')
 const myMeeting = () => import('../pages/home/myMeeting')
 const centerMessage = () => import('../pages/home/centerMessage')
+const meetingInfo = () => import('../pages/home/meetingInfo')
+// const myDate = () => import('../pages/home/myDate')
+const myDateTime = () => import('../pages/home/myDateTime')
+
 
 Vue.use(Router)
 
@@ -97,8 +101,18 @@ export default new Router({
       name: 'centerMessage',
       component: centerMessage
     },
-    
-    
+    // 会议详情 
+    {
+      path: '/meetingInfo',
+      name: 'meetingInfo',
+      component: meetingInfo  
+    },
+    // 我的日历
+    {
+      path: '/myDateTime',
+      name: 'myDateTime',
+      component: myDateTime
+    }
   ]
 })
 
