@@ -8,12 +8,25 @@
 		</div>
 		<div class="message">
 			<input readonly placeholder="请输入账号" v-model="user.loginId" type="text">
-			<input readonly placeholder="请输入用户名" v-model="user.name" type="text">
-			<input placeholder="请输入电话" v-model="user.mobile" type="text">
-			<input placeholder="请输入邮箱" v-model="user.email" type="text">
-			<input placeholder="请输入部门" v-model="user.department" type="text">
+			<input  placeholder="请输入用户名" v-model="user.name" type="text">
+			<input  @blur.prevent="changeBlur()" placeholder="请输入电话" v-model="user.mobile" type="text">
+			<input  @blur.prevent="changeBlur()" placeholder="请输入邮箱" v-model="user.email" type="text">
+			<input @click="show = true" placeholder="请选择部门" readonly v-model="user.department" type="text">
+				<van-popup
+				v-model="show"
+				position="bottom"
+			>
+			</van-popup>
 		</div>
-		<div class="queryMessage" @click="jump">修改</div>	
+		<div class="queryMessage" @click="jump">修改</div>
+		<van-popup v-model="show" position="bottom">
+			<van-picker
+				show-toolbar
+				:columns="departmentList"
+				@cancel="show = false"
+				@confirm="onConfirm"
+			/>
+		</van-popup>
 	</div>
 </template>
 <script>
@@ -28,7 +41,9 @@ export default {
 			// userPhone: '',
 			// userEmail: '',
             // department: '',
-            user:''
+			user:'',
+			show:false,
+			departmentList:[]
 		}
 	},
 	mounted() {
@@ -36,11 +51,49 @@ export default {
 		// console.log(this.axios)
 		// console.log(this.isEmail('11111@qq.com'));
 		Toast.setDefaultOptions({ duration: 2000 })
+		this.getDepartMent()
 	},
 	computed:{
 
 	},
 	methods:{
+		// 解决键盘弹起问题
+		changeBlur() {
+			const u = navigator.userAgent
+			// const app = navigator.appVersion
+			const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
+			if (isIOS) {
+				setTimeout(() => {
+					const scrollHeight = document.documentElement.scrollTop || document.body.scrollTop || 0
+					window.scrollTo(0, Math.max(scrollHeight - 1, 0))
+				}, 200)
+			}
+		},
+		// 获取部门 
+		getDepartMent() {
+			this.axios({
+				url:'/test/meeting/conference/department/list',
+				method:'POST',
+				data:{}
+			})
+			.then(res=>{
+				console.log('res',res)
+				const arr = res.data.data.records
+				const department = []
+				arr.forEach((item,index)=>{
+					this.$set(item, 'text', item.departmentName)
+					department.push(item.departmentName)
+				})
+				this.departmentList = arr
+				// his.departmentList = department
+			})
+		},
+		onConfirm(value,index){
+			console.log(value)
+			console.log(index)
+			this.user.department = value.departmentName
+			this.show = false
+		},
 		onClickLeft() {
 			this.$router.push('/index/myMessage')
 		},
@@ -95,7 +148,14 @@ export default {
 				this.axios({
 					method:'PUT',
 					url:'/test/meeting/conference/user',
-					data:this.user
+					data:{
+						name:this.user.name,
+						id:this.user.id,
+						// loginId:this.user.loginId,
+						mobile:this.user.mobile,
+						email:this.user.email,
+						department:this.user.department
+					}
 				}).then((res)=>{
 					Toast.clear()
 					if(res.data.code === 200){
@@ -108,6 +168,9 @@ export default {
 					}else{
 						Toast.fail('修改失败')
 					}
+				}).catch((error) =>{
+					Toast.fail(error.response.data.message)
+					console.log(error)
 				})
 			}
 			

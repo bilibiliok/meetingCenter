@@ -3,7 +3,7 @@
 		<router-view></router-view>
 		<van-tabbar @click="changeTab1" @change="changeTab" v-model="active">
 			<van-tabbar-item icon="home-o">首页</van-tabbar-item>
-			<van-tabbar-item icon="search">列表</van-tabbar-item>
+			<!-- <van-tabbar-item icon="search">列表</van-tabbar-item> -->
 			<van-tabbar-item icon="friends-o">我的</van-tabbar-item>
 		</van-tabbar>
 	</div>
@@ -26,7 +26,8 @@ export default {
 				this.$router.push('showTab')
 			}else if(this.active === 1){
 				console.log(1)
-				this.$router.push('appointment')
+				// this.$router.push('appointment')
+				this.$router.push('myMessage')
 			}else{
 				console.log(2)
 				this.$router.push('myMessage')

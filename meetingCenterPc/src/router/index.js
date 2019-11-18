@@ -16,6 +16,7 @@ const centerMessage = () => import('../pages/home/centerMessage')
 const meetingInfo = () => import('../pages/home/meetingInfo')
 // const myDate = () => import('../pages/home/myDate')
 const myDateTime = () => import('../pages/home/myDateTime')
+const text = () => import('../pages/home/text')
 
 
 Vue.use(Router)
@@ -52,6 +53,12 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: login
+    },
+    // 测试
+    {
+      path: '/text',
+      name: 'text',
+      component: text
     },
     // 注册
     {

@@ -107,7 +107,7 @@ export default {
 			.then((res)=>{
 				if(res.data.code === 200){
 					Toast.success('登录成功')
-					// console.log('res',res.data.data[0])
+					console.log('res',res.data.data)
 					this.count = res.data.data[0]
 					let objStr = JSON.stringify(this.count) //先转化为键值对模式
 					sessionStorage.setItem('user',objStr)
@@ -120,7 +120,7 @@ export default {
 					this.$router.push({
 						path: '/index/myMessage',
 						query:{
-							active: 2
+							active: 1
 						}
 					})
 				}else{

@@ -59,7 +59,6 @@ const actions = {
                     Toast.fail(resp.data.msg)
                 } else {
                     const user = resp.data.data[0]
-                
                     console.log(user)
                     localStorage.setItem('user',user)
                     // localStorage.setItem('token', token)

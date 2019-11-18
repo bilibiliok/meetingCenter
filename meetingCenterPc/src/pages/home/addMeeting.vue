@@ -75,7 +75,7 @@
                 right-icon="arrow"
                 placeholder="请选择时间"
             />
-           
+
         </van-cell-group>
         <div class="button">
             <van-button @click="apartment" size="large" type="primary">预约</van-button>
@@ -188,7 +188,7 @@ export default {
         this.getMeeting()
     },
     watch:{
-        
+
     },
     methods:{
         changeBlur() {
@@ -332,7 +332,7 @@ export default {
             this.showEndTime = this.curentTime(this.currentDate1)
             this.showed = false
         },
-        curentTime(time){ 
+        curentTime(time){
             var now = new Date(time);
             var year = now.getFullYear();       //年
             var month = now.getMonth() + 1;     //月
@@ -350,12 +350,12 @@ export default {
             if(hh < 10)
                 clock += "0";
             clock += hh + ":";
-            if (mm < 10) clock += '0'; 
+            if (mm < 10) clock += '0';
             clock += mm + ":";
-            // clock += mm     
-            if (ss < 10) clock += '0'; 
-            clock += ss; 
-            return(clock); 
+            // clock += mm
+            if (ss < 10) clock += '0';
+            clock += ss;
+            return(clock);
         },
         formatter(type, value) {
             if(type === 'year') {
@@ -397,7 +397,7 @@ export default {
                 }).then(() => {
                     this.axios({
                         method:'POST',
-                        url:'http://192.168.0.108:8080/test/meeting/meetings/meetings',
+                        url:'/test/meeting/meetings/meetings',
                         data:{
                             meetingName:this.meetingName,
                             meetingRoomName:this.meetingLocation,
@@ -414,16 +414,16 @@ export default {
                         }
                     }).then((res)=>{
                         if(res.data.code === 200){
-                            Toast.success('预约成功，正在审核')
+                            Toast.success('预约成功，等待后台审核')
                             this.$router.push('/myMeeting')
                         } else{
                             Toast.fail(res.data.msg)
                         }
                     })
                 }).catch(() => {
-                
-                });
-            } 
+
+                })
+            }
         }
     }
 }

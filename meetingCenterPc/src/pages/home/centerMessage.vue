@@ -14,6 +14,7 @@
                     <div class="equipment">会议开始时间：{{item.meetingStart}}</div>
                     <div class="person">会议结束时间：{{item.meetingEnd}}</div>
                     <div class="person">会议部门：{{item.meetingDepartment}}</div>
+                    <div class="person">会议参与人：{{item.meetingParticipantName}}</div>
                 </div>
             </div>
         </div>

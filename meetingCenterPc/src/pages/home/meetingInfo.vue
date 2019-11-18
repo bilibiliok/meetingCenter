@@ -188,6 +188,8 @@ export default {
         this.meetingRoomId = this.getMission.meetingRoomId
         this.meetingDepartmentId = this.getMission.meetingDepartmentId
         this.meetngParticipantId = this.getMission.meetngParticipantId
+        // this.currentDate = this.getMission.meetingStart
+        // this.currentDate1 = this.getMission.meetingEnd
         // 获取人员信息
     },
     methods:{
@@ -195,7 +197,7 @@ export default {
         geitMeetingMessage(){
             this.axios({
                 method:'GET',
-                url:`http://192.168.0.108:8080/test/meeting/meetings/meetings/${this.$route.query.id}`
+                url:`/test/meeting/meetings/meetings/${this.$route.query.id}`
             })
             .then((res) =>{
                 if(res.data.code ===200){
@@ -395,37 +397,34 @@ export default {
         // 预约
         // 修改时间
         changeTime(){
+            this.axios({
+                method:'put',
+                url:'/test/meeting/meetings/meetings/important',
+                data:{
+                    id:this.getMission.id,
+                    meetingStart:this.getMission.meetingStart,
+                    meetingEnd:this.getMission.meetingEnd,
+                }
+            }).then((res) =>{
+                if(res.data.code === 200){
+                    console.log('修改成功')
+                    this.startMessage = 1
+                }else{
+                    Toast.fail(res.data.msg)
+                    this.startMessage = 0
+                }
+            }).catch((error) =>{
+                console.log(error)
+            })
+        },
+        // 修改信息
+        changeMessage(){
             const nowTime = +new Date(this.getMission.meetingStart)
             console.log(nowTime);
             const endTime = +new Date(this.getMission.meetingEnd)
             if(nowTime>endTime){
                 Toast.fail('会议开始时间不得大于结束时间')
-            }else{
-                this.axios({
-                    method:'put',
-                    url:'http://192.168.0.108:8080/test/meeting/meetings/meetings/important',
-                    data:{
-                        id:this.getMission.id,
-                        meetingStart:this.getMission.meetingStart,
-                        meetingEnd:this.getMission.meetingEnd,
-                    }
-                }).then((res) =>{
-                    if(res.data.code === 200){
-                        console.log('修改成功')
-                        this.startMessage = 1
-                    }else{
-                        Toast.fail(res.data.msg)
-                        this.startMessage = 0
-                    }
-                }).catch((error) =>{
-                    console.log(error)
-                })
-            }
-        },
-        // 修改信息
-        changeMessage(){
-            this.changeTime()
-            if(this.getMission.meetingName === ''){
+            }else if(this.getMission.meetingName === ''){
                 Toast.fail('请输入会议名')
             } else if(this.getMission.meetingRoomName === ''){
                 Toast.fail('请选择会议室')
@@ -438,9 +437,10 @@ export default {
                     title: '修改',
                     message: '确定修改吗？'
                 }).then(() => {
+                    this.changeTime()
                     this.axios({
                         method:'put',
-                        url:'http://192.168.0.108:8080/test/meeting/meetings/meetings/base',
+                        url:'/test/meeting/meetings/meetings/base',
                         data:{
                             id:this.getMission.id,
                             meetingName:this.getMission.meetingName,

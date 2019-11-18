@@ -31,9 +31,9 @@ export default {
 	},
 	mounted(){
 		this.user = JSON.parse(sessionStorage.getItem('user'))
-		// if(!JSON.parse(sessionStorage.getItem('user'))){
-		// 	this.$router.push('/login')
-		// }
+		if(!JSON.parse(sessionStorage.getItem('user'))){
+			this.$router.push('/login')
+		}
 	},
 	methods:{
 		// 添加会议
@@ -81,7 +81,7 @@ span{
 	}
 </style>
 <style>
-	.van-grid-item__content{
+	.van-grid-item__content--center{
 		background-color:transparent;
 		color: #fff
 	}
