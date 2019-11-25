@@ -111,7 +111,7 @@ export default {
 					this.count = res.data.data[0]
 					let objStr = JSON.stringify(this.count) //先转化为键值对模式
 					sessionStorage.setItem('user',objStr)
-					
+					 localStorage.setItem('user1',objStr)
 					// let a = sessionStorage.getItem('user')
 					// console.log('a',a)
 					let obj1 = JSON.parse(sessionStorage.getItem('user'))

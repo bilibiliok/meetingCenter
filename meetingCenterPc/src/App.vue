@@ -13,7 +13,9 @@ export default {
     }
   },
   mounted() {
-    
+    window.addEventListener('beforeunload', e => {
+      window.localStorage.removeItem('user1')
+    })
   }
 }
 </script>
