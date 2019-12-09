@@ -48,7 +48,17 @@ export default {
 		}
 	},
 	created() {
-		
+		this.axios({
+			methods: 'post',
+			url:'http://cms.hbounty.com/index.php/Admin/Teacher/codeInvite',
+			data:{
+				name:'',
+				school:'',
+				phone:''
+			}
+		}).then((res)=>{
+			console.log('res',res)
+		})
 	},
 	updated() {
 		if (this.loginId&& this.password) {
